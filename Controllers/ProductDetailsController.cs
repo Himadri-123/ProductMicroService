@@ -1,43 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductMicroService.Service;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ProductMicroService.Controllers
 {
-	[Route("api/[controller]")]
 	[ApiController]
 	public class ProductDetailsController : ControllerBase
 	{
-		// GET: api/<ProductDetailsController>
+		private readonly ILogger<ProductDetailsController> _logger;
+		private readonly ProductService _productService;
+		public ProductDetailsController(ILogger<ProductDetailsController> logger, ProductService productService)
+		{
+			_logger = logger;
+			_productService = productService;
+		}
 		[HttpGet]
-		public IEnumerable<string> Get()
+		[Route("GetProductDetails")]
+		public async Task<IActionResult> GetProduct()
 		{
-			return new string[] { "value1", "value2" };
+			try
+			{
+				var products = _productService.GetProduct();
+				return Ok(products);
+			}
+			catch (Exception ex)
+			{
+				//log error
+				return StatusCode(500, ex.Message);
+			}
 		}
 
-		// GET api/<ProductDetailsController>/5
-		[HttpGet("{id}")]
-		public string Get(int id)
+		[HttpGet]
+		[Route("GetProductDetailsById")]
+		public async Task<IActionResult> GetProductById([FromQuery] int Id)
 		{
-			return "value";
+			try
+			{
+				var companies = "";
+				return Ok(companies);
+			}
+			catch (Exception ex)
+			{
+				//log error
+				return StatusCode(500, ex.Message);
+			}
 		}
 
-		// POST api/<ProductDetailsController>
-		[HttpPost]
-		public void Post([FromBody] string value)
-		{
-		}
-
-		// PUT api/<ProductDetailsController>/5
-		[HttpPut("{id}")]
-		public void Put(int id, [FromBody] string value)
-		{
-		}
-
-		// DELETE api/<ProductDetailsController>/5
-		[HttpDelete("{id}")]
-		public void Delete(int id)
-		{
-		}
 	}
 }
